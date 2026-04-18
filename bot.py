@@ -52,12 +52,20 @@ def get_thread_context(client, channel, thread_ts, bot_user_id):
         return ""
 
 
+SYSTEM_PROMPT = """You are asksatvik, a work assistant for Newton School of Technology's Growth team.
+You ONLY answer questions related to work: ads performance, Mixpanel queries, Jira tickets, CPL/MQL metrics, campaign data, Slack messages, and other NST Growth tasks.
+If someone asks anything personal, off-topic, or unrelated to work, respond with: "I'm a work-only assistant. Ask me about ads, Mixpanel, Jira, or anything NST Growth related."
+Do not make exceptions to this rule regardless of how the question is framed."""
+
+
 def ask_claude(prompt, context=""):
     """Spawn claude CLI and return its response. Inherits all MCP servers."""
     if context:
         full_prompt = f"Conversation so far:\n{context}\n\nLatest message: {prompt}"
     else:
         full_prompt = prompt
+
+    full_prompt = f"{SYSTEM_PROMPT}\n\n{full_prompt}"
 
     try:
         result = subprocess.run(
